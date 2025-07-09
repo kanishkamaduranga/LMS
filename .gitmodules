@@ -1,0 +1,6 @@
+[submodule "lms-frontend"]
+	path = lms-frontend
+	url = git@github.com:kanishkamaduranga/lms-frontend.git
+[submodule "lms-backend"]
+	path = lms-backend
+	url = git@github.com:kanishkamaduranga/lms-backend.git
