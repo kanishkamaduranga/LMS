@@ -13,7 +13,7 @@ services:
       - "5432:5432"
 
   backend:
-    build: ./lms-backend
+    build: ./backend
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
@@ -26,7 +26,7 @@ services:
       - postgres
 
   frontend:
-    build: ./lms-frontend
+    build: ./frontend
     environment:
       NEXT_PUBLIC_API_URL: http://backend:3001
     ports:
