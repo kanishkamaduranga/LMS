@@ -2,37 +2,47 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:13-alpine
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+    image: postgres:15
+    container_name: lms_postgres
+    restart: always
     ports:
       - "5432:5432"
+    environment:
+      POSTGRES_DB: lms
+      POSTGRES_USER: lms_user
+      POSTGRES_PASSWORD: lms_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql  # optional
 
   backend:
     build: ./backend
-    environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
+    container_name: lms_backend
+    restart: always
     ports:
-      - "3001:3001"
+      - "5000:5000"
+    environment:
+      DATABASE_URL: postgres://lms_user:lms_pass@postgres:5432/lms
     depends_on:
       - postgres
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
 
   frontend:
     build: ./frontend
-    environment:
-      NEXT_PUBLIC_API_URL: http://backend:3001
+    container_name: lms_frontend
     ports:
       - "3000:3000"
     depends_on:
       - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:5000
 
 volumes:
   postgres_data:
+
+
